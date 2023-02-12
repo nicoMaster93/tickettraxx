@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
 use Swift_Mailer;
 use Swift_SmtpTransport;
@@ -113,6 +114,19 @@ class TicketsController extends Controller
             "success" => true,
             "ticket" => $ticket
         ]);
+
+    }
+    public function delete_ticket($ticketId){
+        try {
+            $ticket = TicketsModel::findOrFail($ticketId);
+            $ticket->record_status = 0;
+            $del = $ticket->save();
+            return response()->json([
+                "success" => (($del) ? true : false),
+                "message" => (($del) ? "Ticket deleted successfully" : "The Ticket could not be deleted")
+            ]);
+        } catch (\Throwable $th) {
+        }
 
     }
 
@@ -307,6 +321,8 @@ class TicketsController extends Controller
 
     public function search_list(Request $request){
         $tickets = TicketsModel::whereIn("fk_ticket_state",["3"]);
+        /* Agrego estado */
+        $tickets->where("record_status", ">", 0);
         if($request->has("start_date")){
             $tickets->where("date_gen", ">=", $request->start_date);
         }
@@ -323,7 +339,7 @@ class TicketsController extends Controller
         
     }
 
-    public function createForm(){        
+    public function createForm($ticketId=0){      
         $materials = MaterialsModel::all();
         $contractors = ContractorsModel::orderBy("company_name")->get();
         $vehicles = array();
@@ -334,14 +350,20 @@ class TicketsController extends Controller
         }
         $pickups = PickupDeliverModel::where("type","=","0")->get();
         $delivers = PickupDeliverModel::where("type","=","1")->get();
-        
-        return view('tickets/create', [
+        $response = [
             "materials" => $materials,
             "contractors" => $contractors,
             "vehicles" => $vehicles,
             "pickups" => $pickups,
             "delivers" => $delivers
-        ]);
+        ];
+        if($ticketId > 0){
+            /* Viene de edicion */
+            $response['dataTicket'] = TicketsModel::find($ticketId);
+            return view('tickets/update', $response);
+        }else{
+            return view('tickets/create', $response);
+        }
     }
 
     public function create(CreateRequest $request){
@@ -355,10 +377,11 @@ class TicketsController extends Controller
                 return Funciones::sendFailedResponse(["vehicle" => "Vehicle not found"]);
             }
         }
-
-        if((!$request->hasFile("photo") && !$request->has("photo_box_data")) ||
-            (!$request->hasFile("photo") && empty($request->photo_box_data))){
-            return Funciones::sendFailedResponse(["photo_res" => "Picture ticket is required"]);
+        if(!$request->has("tikcetId")){
+            if((!$request->hasFile("photo") && !$request->has("photo_box_data")) ||
+                (!$request->hasFile("photo") && empty($request->photo_box_data))){
+                return Funciones::sendFailedResponse(["photo_res" => "Picture ticket is required"]);
+            }
         }
        
         if($request->material == "other"){
@@ -413,8 +436,15 @@ class TicketsController extends Controller
             ->first();
         }
         
+        if(!$request->has("tikcetId")){
+            /* Insert */
+            $ticket = new TicketsModel();
+        }else{
+            /* Update */
+            $ticket = TicketsModel::find($request->tikcetId);
+        }
 
-        $ticket = new TicketsModel();
+
         $ticket->number = $request->number;
         $ticket->date_gen = $request->date_gen;
         $ticket->date_pay = $date_pay->format('Y-m-d');
@@ -552,13 +582,15 @@ class TicketsController extends Controller
             $settlement_ticket->fk_settlement = $settlement->id;
             $settlement_ticket->save();
         }
+        if($request->has("tikcetId")){
+            return redirect()->route('tickets.search_list')->with('message', 'Ticket update successfully!');
+        }
         return redirect()->route('tickets.search_list')->with('message', 'Ticket created successfully!');
 
         
     }
 
     public function upload(Request $request){
-        
         if(!$request->has("file64")){
             return response()->json([
                 "success" => false,
@@ -581,6 +613,17 @@ class TicketsController extends Controller
         $reader->setDelimiter(';');
         foreach ($reader as $index => $row) {            
             try{
+                if($index == 0 && strtolower($row[0])!=="date"){
+                    /* Validamos que tenga las cabeceras */
+                    return response()->json([
+                        "success" => false,
+                        "message" => "The file doesn't contain headers!"
+                    ]);
+                }else if($index == 0){
+                    /* Si tiene cabeceras las omitimos y continuamos con la data */
+                    continue;
+                }
+
                 foreach($row as $key =>$valor){
                     if($valor==""){
                         $row[$key]=null;
@@ -590,8 +633,8 @@ class TicketsController extends Controller
                     }
                 }
 
-
                 $vehicles = VehiclesModel::where("unit_number","=",$row[2])->first();
+                Log::info(print_r(["Vehiculos", $row[2], $vehicles],1));
                 if(!isset($vehicles)){
                     $vehicles = VehiclesModel::select("vehicles.id")
                     ->join("vehicles_alias as va", "va.fk_vehicle", "vehicles.id")
@@ -610,9 +653,8 @@ class TicketsController extends Controller
                 $date_pay->modify('thursday this week');
                 
    
-
-                $row[6] = $this->corregir_data($row[6]);//Rate
-                $row[7] = $this->corregir_data($row[7]);//Tonage                
+                $row[7] = $this->corregir_data($row[7]);//Rate
+                $row[6] = $this->corregir_data($row[6]);//Tonage                
                 $row[8] = $this->corregir_data($row[8]);//Total
                 $row[9] = $this->corregir_data($row[9]);//FSC
 

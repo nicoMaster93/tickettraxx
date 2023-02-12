@@ -48,7 +48,7 @@ class CreateTickets extends Migration
 
             $table->bigInteger('fk_ticket_state')->unsigned();
             $table->foreign('fk_ticket_state')->references('id')->on('ticket_states')->onDelete('cascade');
-            $table->index('fk_ticket_state');           
+            $table->index('fk_ticket_state');      
 
         });
     }

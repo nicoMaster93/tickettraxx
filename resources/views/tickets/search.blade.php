@@ -26,9 +26,13 @@
                 <img src="{{ asset('imgs/search.png')}}" /> Search
             </button>
         </div>
-        <div class="col-1"></div>
+        <div class="col-1">
+        </div>
         <div class="col-3 text-right">
             @if(in_array(3, $menu_user))
+            <a href="{{asset('storage/plantillas/Tickets_Base.csv')}}" download="plantillaTickets.csv" title="Download template" class="btn btn-excel" data-toggle="tooltip" data-placement="bottom"  >
+                <img src="{{ asset('imgs/download.png')}}" />
+            </a>
             <button type="button" class="btn btn-excel"  data-toggle="modal" data-target="#modal-upload">
                 <img src="{{ asset('imgs/excel.png')}}" /> Ticket bulk upload
             </button>
@@ -99,11 +103,12 @@
                     <h5 class="my-0">Do you really want to delete this ticket?</h5>
                 </div>
                 <div class="modal-body">                    
-                    <form method="POST" action="" id="form-delete">
+                    <div id="msjResponse"></div>
+                    <form method="POST" data-action="" id="form-delete">
                         @csrf
                         <div class="row">
                             <div class="col-sm-6 text-center">
-                                <input type="submit" class="btn btn-verde2 full-width" value="Delete" />
+                                <input type="submit" data-delete="" class="btn btn-verde2 full-width" value="Delete" />
                             </div>
                             <div class="col-sm-6 text-center">
                                 <input type="button" class="btn btn-cancelar full-width" data-dismiss="modal" value="Cancel" />
@@ -119,6 +124,18 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="my-0 text-center">Verificated ticket</h5>
+                        <div>
+                            @if(in_array(60, $menu_user))
+                                <a class="btn btn-info update" title="Update Ticket" data-toggle="tooltip" data-placement="bottom" data-update >
+                                    <img src="{{ asset('imgs/ico_edit.png')}}" title="Update Ticket" alt="">
+                                </a>
+                            @endif
+                            @if(in_array(59, $menu_user))
+                                <a class="btn btn-info delete" title="Delete Ticket" data-toggle="tooltip" data-placement="bottom" >
+                                    <img src="{{ asset('imgs/ico_delete.png')}}" title="Delete Ticket" alt="">
+                                </a>
+                            @endif
+                        </div>
                 </div>
                 <div class="modal-body">                    
                     <div class="row">
@@ -171,14 +188,11 @@
                         </div>
                     </div><br><br>
                     <div class="row">
-                        <div class="col-sm-3"></div>
-                        <div class="col-sm-3 text-center">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-4 text-center">
                             @if(in_array(5, $menu_user))
                                 <a href="#" class="btn btn-danger recheck-link">Send to recheck</a>
                             @endif
-                        </div>
-                        <div class="col-sm-3 text-center">
-                            <input type="button" class="btn btn-verde2" data-dismiss="modal" value="Accept" />
                         </div>
                         <div class="col-sm-3"></div>
                     </div>

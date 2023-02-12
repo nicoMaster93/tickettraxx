@@ -681,7 +681,7 @@ span#info-file-preview.activo {
 
 button.close-response {
     position: absolute;
-    right: 6px;
+    right: 15px;
     background: url(/imgs/close.png);
     width: 30px;
     height: 22px;
@@ -837,4 +837,10 @@ span.id_quickbooks {
 
 #modal-invoice .form-group{
     margin-bottom: 10px;
+}
+.padding{
+    margin: 25px 0;
+    padding: 10px 5px;
+    margin-bottom: 30px;
+    border-radius: 5px;
 }

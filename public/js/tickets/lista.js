@@ -1,10 +1,15 @@
 jQuery(function() {
+    $('[data-toggle="tooltip"]').tooltip()
     $('#table-tickets').DataTable(optionsTable);
-    
     $("body").on("click", ".delete", function(e) {
         e.preventDefault();
         $("#form-delete").prop("action", $(this).prop("href"));
+        $(".modal-details").modal("hide");
         $(".modal-delete").modal("show");
+    });
+    $("body").on("click", ".update", function(e) {
+        e.preventDefault();
+        window.location.href = $(this).data('update')
     });
 
     $("body").on("keyup","#message", function(){
@@ -14,6 +19,9 @@ jQuery(function() {
     $("body").on("click",".detail-ticket", function(){
         $.get($(this).attr("href"), function(data) {
             let ticket = data.ticket;
+
+            $(`.btn.update`).data("update",'/tickets/update/' + ticket.id );
+            $(`#form-delete`).data("action",'/tickets/delete/' + ticket.id );
             $("#info-date").html(ticket.date_gen);
             $("#info-number").html(ticket.number);
             $("#info-unit").html(ticket.vehicle.unit_number);
@@ -51,6 +59,41 @@ jQuery(function() {
 
         });
     });
+    $("body").on("submit", "#form-delete", function(e) {
+        e.preventDefault();
+        var formdata = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: $(this).data("action"),
+            cache: false,
+            processData: false,
+            contentType: false,
+            data: formdata,
+            success: function(data) {
+                if (data.success) {
+                    $("#msjResponse").append("<div class='response-success padding'>"+data.message+"<button class='close-response'></button></div>");
+                    $('#form-delete :input').filter( function(){ return this.value == 'Delete'; }
+                    ).css('display','none');
+                    $('.modal.fade.modal-delete').on('hidden.bs.modal', function () {
+                      setTimeout(() => {
+                        window.location.reload()
+                      }, 500);  
+                    })
+                } else {
+                    $("#form-delete").append("<div class='response-error padding'>"+data.message+"<button class='close-response'></button></div>");
+                }
+            },
+            error: function(data) {
+                $(".response-content").append("<div class='response-error'>Error server</div>");
+            }
+        });
+    });
+    /* Limpio el boton de eliminar  */
+    $('.modal.fade.modal-delete').on('hidden.bs.modal', function () {
+        $('#form-delete :input').filter( function(){ return this.value == 'Delete' } ).css('display','block'); 
+        $('#msjResponse').empty();
+        
+    })
    
     $("body").on("change", "#files", function(e) {
         e.preventDefault();

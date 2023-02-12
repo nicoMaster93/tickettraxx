@@ -63,12 +63,16 @@ Route::group(['prefix' => 'tickets'], function(){
     Route::get('/search_list', 'App\Http\Controllers\TicketsController@search_list')->name('tickets.search_list');
     Route::get('/create', 'App\Http\Controllers\TicketsController@createForm')->name('tickets.create');
     Route::post('/create', 'App\Http\Controllers\TicketsController@create');
+    Route::get('/update/{id}', 'App\Http\Controllers\TicketsController@createForm')->name('tickets.update');
+    Route::post('/update/{id}', 'App\Http\Controllers\TicketsController@create');
     Route::get('/to_verify', 'App\Http\Controllers\TicketsController@to_verify')->name('tickets.to_verify');
     
     Route::get('/info/{id}', 'App\Http\Controllers\TicketsController@info')->name('tickets.info');
     Route::get('/recheck/{id}', 'App\Http\Controllers\TicketsController@recheck')->name('tickets.recheck');
+    Route::post('/delete/{id}', 'App\Http\Controllers\TicketsController@delete_ticket')->name('tickets.delete');
     Route::post('/change_state', 'App\Http\Controllers\TicketsController@change_state')->name('tickets.change_state');
 
+    Route::post('/upload', 'App\Http\Controllers\TicketsController@upload')->name('tickets.upload');
     Route::post('/upload', 'App\Http\Controllers\TicketsController@upload')->name('tickets.upload');
     Route::get('/createInvoice', 'App\Http\Controllers\TicketsController@createInvoice')->name('tickets.createInvoice');
     Route::post('/createInvoice', 'App\Http\Controllers\TicketsController@createFormInvoice');

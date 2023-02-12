@@ -21,7 +21,14 @@ jQuery(function() {
                 success: function(data) {
                     if(data.success){
                         for(let c in data.vehicles){
-                            $(`#vehicle`).append(`<option value="${data.vehicles[c].id}">${data.vehicles[c].unit_number}</option>`);
+                            if($("#tikcetId").length > 0){
+                                let info = $("#tikcetId").data('infoticket');
+                                var selected = (info == data.vehicles[c].id ? 'selected' : '' );
+                                $(`#vehicle`).append(`<option value="${data.vehicles[c].id}" ${selected} >${data.vehicles[c].unit_number}</option>`);
+                            }else{
+                                $(`#vehicle`).append(`<option value="${data.vehicles[c].id}">${data.vehicles[c].unit_number}</option>`);
+                            }
+                                
                         }
                     }                
                 },
@@ -144,6 +151,9 @@ jQuery(function() {
         $(ev.target).removeAttr("drop-active"); 
     }
     
-    
+    if($("#tikcetId").length > 0){
+        console.log($("#tikcetId").val())
+        $("#contractor").change();
+    }
     
 });
