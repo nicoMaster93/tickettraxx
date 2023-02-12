@@ -1,0 +1,221 @@
+{
+    "variables": [],
+    "info": {
+        "name": "Concrete Redi API",
+        "_postman_id": "decf65aa-6a97-49f0-bbf5-544fbc75a1f1",
+        "description": "",
+        "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.0.0\/collection.json"
+    },
+    "item": [
+        {
+            "name": "v 1.0.0",
+            "description": "",
+            "item": [
+                {
+                    "name": "Login contractor\nGenerate an access token to use in the rest of the app",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/contractor\/login",
+                            "query": []
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"user\": \"nihil\",\n    \"pass\": \"esse\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Edit contractor\nUpdate basic fields of contractor",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/contractor\/update",
+                            "query": []
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"molestiae\",\n    \"email\": \"ea\",\n    \"password\": \"aut\",\n    \"repeat_password\": \"numquam\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Logout contractor\nLogout contractor",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/contractor\/logout",
+                            "query": []
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "[]"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Collection of tickets\nShows all tickets by contractor",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/tickets_contractor",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"start_date\": \"non\",\n    \"end_date\": \"officiis\",\n    \"ticket_number\": \"voluptas\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Create ticket\nCreate a ticket to verify",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/tickets_contractor\/create",
+                            "query": []
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"number\": \"quia\",\n    \"date_gen\": \"ut\",\n    \"vehicle\": \"dolorem\",\n    \"material\": \"eum\",\n    \"other_material\": \"vitae\",\n    \"pickup\": \"nulla\",\n    \"deliver\": \"aspernatur\",\n    \"tonage\": \"eius\",\n    \"rate\": \"assumenda\",\n    \"total\": \"eos\",\n    \"photo\": \"expedita\",\n    \"photo_box_data\": \"vitae\",\n    \"photo_box_name\": \"eius\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Update ticket\nUpdate ticket if state is sended to recheck or to verify",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/tickets_contractor\/update\/:id",
+                            "query": [],
+                            "variable": [
+                                {
+                                    "id": "id",
+                                    "key": "id",
+                                    "value": "reiciendis",
+                                    "description": "Integer required ID of ticket to modify."
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"number\": \"unde\",\n    \"date_gen\": \"quis\",\n    \"vehicle\": \"voluptas\",\n    \"material\": \"et\",\n    \"other_material\": \"quis\",\n    \"pickup\": \"neque\",\n    \"deliver\": \"molestiae\",\n    \"tonage\": \"ut\",\n    \"rate\": \"rerum\",\n    \"total\": \"officia\",\n    \"photo\": \"sit\",\n    \"photo_box_data\": \"et\",\n    \"photo_box_name\": \"occaecati\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                },
+                {
+                    "name": "Collection of payments\nShows all payments by contractor",
+                    "request": {
+                        "url": {
+                            "protocol": "http",
+                            "host": "concrete.test",
+                            "path": "api\/payments",
+                            "query": []
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"start_date\": \"nihil\",\n    \"end_date\": \"incidunt\"\n}"
+                        },
+                        "description": "",
+                        "response": []
+                    }
+                }
+            ]
+        }
+    ]
+}
