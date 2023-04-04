@@ -98,46 +98,53 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="my-0 text-center">Verificated ticket</h5>
+                    @if(in_array(60, $menu_user))
+                        <div data-update="true" data-url="{{route('tickets.change_field')}}" ></div>
+                        <a id="btnUpdateTicket" href="{{route('tickets.update', ['id' => 0])}}" target="_blank" data-toggle="tooltip" data-placement="left" title="Update" >
+                            <img src="{{ asset('imgs/ico_edit.png')}}" />
+                        </a>
+                    @endif
                 </div>
                 <div class="modal-body">  
                     <div class="row align-items-center">
                         <div class="col-8">
+                            {{--  Valido que tenga permisos de edicion   --}}
                             <div class="row">
                                 <div class="col-sm-3 col-info">
                                     <h6>Date</h6>
-                                    <span id="info-date"></span>
+                                    <span id="info-date" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Number ticket</h6>
-                                    <span id="info-number"></span>
+                                    <span id="info-number" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Unit</h6>
-                                    <span id="info-unit"></span>
+                                    <span id="info-unit" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Material</h6>
-                                    <span id="info-material"></span>
+                                    <span id="info-material" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Tonage</h6>
-                                    <span id="info-tonage"></span>
+                                    <span id="info-tonage" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Rate</h6>
-                                    <span id="info-rate"></span>
+                                    <span id="info-rate" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Total</h6>
-                                    <span id="info-total"></span>
+                                    <span id="info-total" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Pickup</h6>
-                                    <span id="info-pickup"></span>
+                                    <span id="info-pickup" class="inpUpdate"></span>
                                 </div>
                                 <div class="col-sm-3 col-info">
                                     <h6>Deliver</h6>
-                                    <span id="info-deliver"></span>
+                                    <span id="info-deliver" class="inpUpdate"></span>
                                 </div> 
                             </div>
                             <div class="row">

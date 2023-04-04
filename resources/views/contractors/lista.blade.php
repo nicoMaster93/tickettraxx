@@ -53,7 +53,7 @@
                                 <span class="state_3">{{$contractor->state->name}}</span>
                                 @endif                                
                             </td>
-                            <td class="text-center cont-icons" width="120">
+                            <td class="text-center cont-icons" width="140">
                                 @if(in_array(16, $menu_user))
                                 <a href="{{route('drivers.index', ['id' => $contractor->id])}}" class="driver" data-toggle="tooltip" data-placement="left" title="Drivers">
                                     <img src="{{ asset('imgs/ico_driver.png')}}" />
@@ -71,6 +71,9 @@
                                 @endif
                                 @if(in_array(25, $menu_user))
                                     @if($contractor->state->id == 1)
+                                        <a href="{{route('contractors.deletePermanent', ['id' => $contractor->id, 'permanent' => true])}}" class="delete per"  data-toggle="tooltip" data-placement="left" title="Make Delete">
+                                            <img src="{{ asset('imgs/icon-trash.png')}}" class="delete" />
+                                        </a>
                                         <a href="{{route('contractors.delete', ['id' => $contractor->id])}}" class="delete"  data-toggle="tooltip" data-placement="left" title="Make Inactive">
                                             <img src="{{ asset('imgs/ico_delete.png')}}" />
                                         </a>
@@ -91,14 +94,14 @@
         <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="my-0">Do you really want to make inactive this contractor?</h5>
+                    <h5 class="my-0"></h5>
                 </div>
                 <div class="modal-body">                    
                     <form method="POST" action="" id="form-delete">
                         @csrf
                         <div class="row">
                             <div class="col-sm-6 text-center">
-                                <input type="submit" class="btn btn-verde2 full-width" value="Make Inactive" />
+                                <input type="submit" class="btn btn-verde2 full-width" id="btnSubmit" value="Make Inactive" />
                             </div>
                             <div class="col-sm-6 text-center">
                                 <input type="button" class="btn btn-cancelar full-width" data-dismiss="modal" value="Cancel" />

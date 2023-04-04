@@ -368,6 +368,7 @@ class TicketsController extends Controller
 
     public function create(CreateRequest $request){
         //Search vehicle by name in vehicles and aliases
+        
         $vehicles = VehiclesModel::where("unit_number","=",$request->vehicle)->orWhere("id","=",$request->vehicle)->first();
         if(!isset($vehicles)){
             $vehicles = VehiclesModel::select("vehicles.id")
@@ -392,8 +393,7 @@ class TicketsController extends Controller
         else{
             $material = MaterialsModel::findOrFail($request->material);
         }
-
-
+        // dd($request->all());
         if($request->hasFile("photo")){
             //Agregar archivo por file   
             $folder = "public/ticket_files/";
@@ -402,13 +402,18 @@ class TicketsController extends Controller
         }
         else{
             //Agregar file por texto
-            $folder = "public/ticket_files/";
-            $file_name =  time()."_".$request->photo_box_name;
-            Funciones::subirBase64($request->photo_box_data, $folder.$file_name);           
+            if(!is_null($request->photo_box_data)){
+                $folder = "public/ticket_files/";
+                $file_name =  time()."_".$request->photo_box_name;
+                Funciones::subirBase64($request->photo_box_data, $folder.$file_name);           
+            }
         }
+        
+        
         
         $pickup = PickupDeliverModel::find($request->pickup);
         $deliver = PickupDeliverModel::find($request->deliver);
+        Log::info(['$pickup', $request->all()]);
         
         
         $date_pay = new DateTime($request->date_gen);
@@ -450,13 +455,15 @@ class TicketsController extends Controller
         $ticket->date_pay = $date_pay->format('Y-m-d');
         $ticket->pickup = $pickup->place;
         $ticket->deliver = $deliver->place;
-        $ticket->file = $folder.$file_name;
+        if(isset($folder)){
+            $ticket->file = $folder.$file_name;
+        }
         $ticket->tonage = $request->tonage;
         $ticket->rate = $request->rate;
         $ticket->total = $request->total;
         $ticket->fk_vehicle = $vehicles->id;
         $ticket->fk_material = $material->id;
-        $ticket->fk_ticket_state = "3";
+        $ticket->fk_ticket_state =  ($ticket->fk_ticket_state ?? "3");
         if(isset($fsc)){
             $ticket->surcharge = ($request->total * ($fsc->percentaje /100) );
             $ticket->fk_surcharge = $fsc->id;
@@ -467,125 +474,135 @@ class TicketsController extends Controller
         }
         $ticket->save();
 
+        /*
+        * JN || This part will be updated only if the status is not "to check [ 1 ] "
+        */
+        if($ticket->fk_ticket_state != 1){
 
-        $inicio_settlement = new DateTime($ticket->date_pay);
-        $inicio_settlement->modify('monday this week');
-
-        $fin_settlement = new DateTime($ticket->date_pay);
-        $fin_settlement->modify('saturday this week');
-
-        $settlement = SettlementsModel::where("start_date", "=", $inicio_settlement->format('Y-m-d'))
-        ->where("end_date", "=", $fin_settlement->format('Y-m-d'))
-        ->where("fk_contractor", "=", $vehicles->fk_contractor)
-        ->where("fk_settlement_state", "=", "1")
-        ->first();
-
-        if(!isset($settlement)){
-            $settlement = new SettlementsModel();
-            $settlement->start_date = $inicio_settlement->format('Y-m-d');
-            $settlement->end_date = $fin_settlement->format('Y-m-d');
-            $settlement->subtotal = $ticket->total;
-            $settlement->deduction = 0;
-            $settlement->other_payments = 0;
-            $settlement->total = $ticket->total;
-            $settlement->surcharge = $ticket->surcharge;
-            $settlement->for_contractor = round($ticket->total * ($vehicles->contractor->percentage/100), 2);
-            $settlement->fk_contractor = $vehicles->fk_contractor;
-            $settlement->fk_settlement_state = "1";
-            $settlement->save();
-            
-            $settlement_ticket = new SettlementsTicketsModel();
-            $settlement_ticket->fk_ticket = $ticket->id;
-            $settlement_ticket->fk_settlement = $settlement->id;
-            $settlement_ticket->save();
-
-            //Verificamos si hay deducciones pendientes por agregar
-            $deductions = DeductionsModel::whereRaw("fk_deduction_state = 1 or fk_deduction_type = 3")
-            ->where("date_pay","<",$settlement->end_date)->get();
-            foreach($deductions as $deduction){
-                $deductionValue = 0;
-                if($deduction->fk_deduction_type == "3"){
-                    $vehicles = VehiclesModel::select(DB::raw("count(*) as cuenta"))
-                    ->where("fk_contractor","=", $deduction->fk_contractor)
-                    ->where("fk_vehicle_state","=","1")
-                    ->first();
-                    $config = ConfigModel::findOrFail(1);
-                    if(isset($vehicles)){
-                        $deductionValue = $config->insurance * ($vehicles->cuenta ?? 0);
-                    }                    
-                    $settlement->deduction = $settlement->deduction + $deductionValue;
-                    $settlement->for_contractor = $settlement->for_contractor - $deductionValue;
-
-                }
-                else if($deduction->fk_deduction_type == "2"){
-                    $deductionValue = $deduction->total_value;
-                    $settlement->deduction = $settlement->deduction + $deduction->total_value;
-                    $settlement->for_contractor = $settlement->for_contractor - $deduction->total_value;
-                }
-                else if($deduction->fk_deduction_type == "1"){
-                    if(isset($deduction->number_installments)){
-                        $deductionValue = round($deduction->total_value/$deduction->number_installments,2);
+            $inicio_settlement = new DateTime($ticket->date_pay);
+            $inicio_settlement->modify('monday this week');
+    
+            $fin_settlement = new DateTime($ticket->date_pay);
+            $fin_settlement->modify('saturday this week');
+    
+            $settlement = SettlementsModel::where("start_date", "=", $inicio_settlement->format('Y-m-d'))
+            ->where("end_date", "=", $fin_settlement->format('Y-m-d'))
+            ->where("fk_contractor", "=", $vehicles->fk_contractor)
+            ->where("fk_settlement_state", "=", "1")
+            ->first();
+    
+            if(!isset($settlement)){
+                $settlement = new SettlementsModel();
+                $settlement->start_date = $inicio_settlement->format('Y-m-d');
+                $settlement->end_date = $fin_settlement->format('Y-m-d');
+                $settlement->subtotal = $ticket->total;
+                $settlement->deduction = 0;
+                $settlement->other_payments = 0;
+                $settlement->total = $ticket->total;
+                $settlement->surcharge = $ticket->surcharge;
+                $settlement->for_contractor = round($ticket->total * ($vehicles->contractor->percentage/100), 2);
+                $settlement->fk_contractor = $vehicles->fk_contractor;
+                $settlement->fk_settlement_state = "1";
+                $settlement->save();
+                
+                $settlement_ticket = new SettlementsTicketsModel();
+                $settlement_ticket->fk_ticket = $ticket->id;
+                $settlement_ticket->fk_settlement = $settlement->id;
+                $settlement_ticket->save();
+    
+                //Verificamos si hay deducciones pendientes por agregar
+                $deductions = DeductionsModel::whereRaw("fk_deduction_state = 1 or fk_deduction_type = 3")
+                ->where("date_pay","<",$settlement->end_date)->get();
+                foreach($deductions as $deduction){
+                    $deductionValue = 0;
+                    if($deduction->fk_deduction_type == "3"){
+                        $vehicles = VehiclesModel::select(DB::raw("count(*) as cuenta"))
+                        ->where("fk_contractor","=", $deduction->fk_contractor)
+                        ->where("fk_vehicle_state","=","1")
+                        ->first();
+                        $config = ConfigModel::findOrFail(1);
+                        if(isset($vehicles)){
+                            $deductionValue = $config->insurance * ($vehicles->cuenta ?? 0);
+                        }                    
+                        $settlement->deduction = $settlement->deduction + $deductionValue;
+                        $settlement->for_contractor = $settlement->for_contractor - $deductionValue;
+    
                     }
-                    else{
-                        $deductionValue = $deduction->fixed_value;
+                    else if($deduction->fk_deduction_type == "2"){
+                        $deductionValue = $deduction->total_value;
+                        $settlement->deduction = $settlement->deduction + $deduction->total_value;
+                        $settlement->for_contractor = $settlement->for_contractor - $deduction->total_value;
+                    }
+                    else if($deduction->fk_deduction_type == "1"){
+                        if(isset($deduction->number_installments)){
+                            $deductionValue = round($deduction->total_value/$deduction->number_installments,2);
+                        }
+                        else{
+                            $deductionValue = $deduction->fixed_value;
+                        }
+                        
+                        if($deductionValue > $deduction->balance_due){
+                            $deductionValue = $deduction->balance_due;
+                        }
+                        $settlement->deduction = $settlement->deduction + $deductionValue;
+                        $settlement->for_contractor = $settlement->for_contractor - $deductionValue;
                     }
                     
-                    if($deductionValue > $deduction->balance_due){
-                        $deductionValue = $deduction->balance_due;
-                    }
-                    $settlement->deduction = $settlement->deduction + $deductionValue;
-                    $settlement->for_contractor = $settlement->for_contractor - $deductionValue;
+                    $settlement->save();
+    
+                    $settlement_deduction = new SettlementsDeductionsModel();            
+                    $settlement_deduction->value = $deductionValue;
+                    $settlement_deduction->fk_deduction = $deduction->id;
+                    $settlement_deduction->fk_settlement = $settlement->id;
+                    $settlement_deduction->save();
+                    $deduction->fk_deduction_state = 2;
+                    $deduction->save();
                 }
-                
-                $settlement->save();
-
-                $settlement_deduction = new SettlementsDeductionsModel();            
-                $settlement_deduction->value = $deductionValue;
-                $settlement_deduction->fk_deduction = $deduction->id;
-                $settlement_deduction->fk_settlement = $settlement->id;
-                $settlement_deduction->save();
-                $deduction->fk_deduction_state = 2;
-                $deduction->save();
+    
+                //Verificamos si hay otros pagos pendientes por agregar
+                $other_payments = OtherPaymentsModel::where("fk_other_payment_state","=","1")
+                ->whereBetween("date_pay",[$inicio_settlement->format('Y-m-d'), $fin_settlement->format('Y-m-d')])
+                ->get();
+                foreach($other_payments as $other_payment){
+                    $settlement->other_payments = $settlement->other_payments + $other_payment->total;
+                    $settlement->for_contractor = $settlement->for_contractor + $other_payment->total;
+                    $settlement->save();
+    
+                    $setttlement_payment = new SettlementsOtherPaymentsModel();
+                    $setttlement_payment->fk_other_payments = $other_payment->id;
+                    $setttlement_payment->fk_settlement = $settlement->id;
+                    $setttlement_payment->save();
+    
+    
+                    $other_payment->fk_other_payment_state = 2; //Added to settlement
+                    $other_payment->save();
+                }
             }
-
-            //Verificamos si hay otros pagos pendientes por agregar
-            $other_payments = OtherPaymentsModel::where("fk_other_payment_state","=","1")
-            ->whereBetween("date_pay",[$inicio_settlement->format('Y-m-d'), $fin_settlement->format('Y-m-d')])
-            ->get();
-            foreach($other_payments as $other_payment){
-                $settlement->other_payments = $settlement->other_payments + $other_payment->total;
-                $settlement->for_contractor = $settlement->for_contractor + $other_payment->total;
+            else{
+    
+                $settlement->subtotal = $settlement->subtotal + $ticket->total;
+                $settlement->deduction = 0;
+                $settlement->other_payments = 0;
+                $settlement->total = $settlement->total + $ticket->total;
+                $settlement->surcharge = $settlement->surcharge + $ticket->surcharge;
+                $settlement->for_contractor = $settlement->for_contractor + round($ticket->total * ($vehicles->contractor->percentage/100), 2);
                 $settlement->save();
-
-                $setttlement_payment = new SettlementsOtherPaymentsModel();
-                $setttlement_payment->fk_other_payments = $other_payment->id;
-                $setttlement_payment->fk_settlement = $settlement->id;
-                $setttlement_payment->save();
-
-
-                $other_payment->fk_other_payment_state = 2; //Added to settlement
-                $other_payment->save();
+    
+                $settlement_ticket = new SettlementsTicketsModel();
+                $settlement_ticket->fk_ticket = $ticket->id;
+                $settlement_ticket->fk_settlement = $settlement->id;
+                $settlement_ticket->save();
             }
-        }
-        else{
+            
+            if($request->has("tikcetId")){
+                return redirect()->route('tickets.search_list')->with('message', 'Ticket update successfully!');
+            }
+            return redirect()->route('tickets.search_list')->with('message', 'Ticket created successfully!');
 
-            $settlement->subtotal = $settlement->subtotal + $ticket->total;
-            $settlement->deduction = 0;
-            $settlement->other_payments = 0;
-            $settlement->total = $settlement->total + $ticket->total;
-            $settlement->surcharge = $settlement->surcharge + $ticket->surcharge;
-            $settlement->for_contractor = $settlement->for_contractor + round($ticket->total * ($vehicles->contractor->percentage/100), 2);
-            $settlement->save();
+        }else{
+            return Funciones::closeWindow('Ticket update successfully!');
+        }
 
-            $settlement_ticket = new SettlementsTicketsModel();
-            $settlement_ticket->fk_ticket = $ticket->id;
-            $settlement_ticket->fk_settlement = $settlement->id;
-            $settlement_ticket->save();
-        }
-        if($request->has("tikcetId")){
-            return redirect()->route('tickets.search_list')->with('message', 'Ticket update successfully!');
-        }
-        return redirect()->route('tickets.search_list')->with('message', 'Ticket created successfully!');
 
         
     }
@@ -634,7 +651,6 @@ class TicketsController extends Controller
                 }
 
                 $vehicles = VehiclesModel::where("unit_number","=",$row[2])->first();
-                Log::info(print_r(["Vehiculos", $row[2], $vehicles],1));
                 if(!isset($vehicles)){
                     $vehicles = VehiclesModel::select("vehicles.id")
                     ->join("vehicles_alias as va", "va.fk_vehicle", "vehicles.id")
@@ -951,5 +967,24 @@ class TicketsController extends Controller
 
 
 
+    }
+
+    public function change_field(Request $request){
+        try {
+            //code...
+            print_r("ENtro");die;
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+        // Log::info("entro en la peticion post");
+        
+        // // $ticket = TicketsModel::find($request->id);
+        // // $ticket->fk_ticket_state = $request->state;
+        // // if($request->has("message") && !empty($request->message)){
+        // //     $ticket->return_message = $request->message;
+        // // }        
+        // // $ticket->save();
+
+        // return response()->json([ "success" => true ]);
     }
 }

@@ -58,6 +58,11 @@ Route::get('email/verify', 'App\Http\Controllers\Auth\VerificationController@sho
 Route::get('email/verify/{id}/{hash}', 'App\Http\Controllers\Auth\VerificationController@verify')->name('verification.verify');
 Route::post('email/resend', 'App\Http\Controllers\Auth\VerificationController@resend')->name('verification.resend');
 
+
+Route::group(['prefix' => 'close'], function(){
+    Route::get('/', 'App\Http\Controllers\Funciones@closeWindow')->name('close.window');
+});
+
 Route::group(['prefix' => 'tickets'], function(){
     Route::get('/', 'App\Http\Controllers\TicketsController@index')->name('tickets.index');
     Route::get('/search_list', 'App\Http\Controllers\TicketsController@search_list')->name('tickets.search_list');
@@ -67,6 +72,7 @@ Route::group(['prefix' => 'tickets'], function(){
     Route::post('/update/{id}', 'App\Http\Controllers\TicketsController@create');
     Route::get('/to_verify', 'App\Http\Controllers\TicketsController@to_verify')->name('tickets.to_verify');
     
+    Route::post('/change_field', 'App\Http\Controllers\TicketsController@change_field')->name('tickets.change_field');
     Route::get('/info/{id}', 'App\Http\Controllers\TicketsController@info')->name('tickets.info');
     Route::get('/recheck/{id}', 'App\Http\Controllers\TicketsController@recheck')->name('tickets.recheck');
     Route::post('/delete/{id}', 'App\Http\Controllers\TicketsController@delete_ticket')->name('tickets.delete');
@@ -86,6 +92,7 @@ Route::group(['prefix' => 'contractors'], function(){
     Route::post('/create', 'App\Http\Controllers\ContractorsController@create');
 
     Route::post('/delete/{id}', 'App\Http\Controllers\ContractorsController@delete')->name('contractors.delete');
+    Route::post('/deletePermanent/{id}/{permanent}', 'App\Http\Controllers\ContractorsController@delete')->name('contractors.deletePermanent');
     Route::get('/activate/{id}', 'App\Http\Controllers\ContractorsController@activate')->name('contractors.activate');
     
 
@@ -183,6 +190,8 @@ Route::group(['prefix' => 'deductions'], function(){
 
     Route::post('/upload', 'App\Http\Controllers\DeductionsController@upload')->name('deductions.upload');
     Route::get('/details/{id}', 'App\Http\Controllers\DeductionsController@details')->name('deductions.details');
+    
+    Route::get('/download_template', 'App\Http\Controllers\DeductionsController@download_template')->name('deductions.download_template');
 });
 
 

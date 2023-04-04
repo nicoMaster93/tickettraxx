@@ -95,4 +95,8 @@ class Funciones extends Controller
         ]);
         return $responsePush;        
 	}
+
+    public function closeWindow($msj = ""){
+        return view('close')->with('message', $msj);
+    }
 }

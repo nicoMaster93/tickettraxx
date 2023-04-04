@@ -19,18 +19,17 @@ jQuery(function() {
     $("body").on("click",".detail-ticket", function(){
         $.get($(this).attr("href"), function(data) {
             let ticket = data.ticket;
-
             $(`.btn.update`).data("update",'/tickets/update/' + ticket.id );
             $(`#form-delete`).data("action",'/tickets/delete/' + ticket.id );
-            $("#info-date").html(ticket.date_gen);
-            $("#info-number").html(ticket.number);
-            $("#info-unit").html(ticket.vehicle.unit_number);
-            $("#info-material").html(ticket.material,name);
-            $("#info-tonage").html(ticket.tonage);
-            $("#info-rate").html(ticket.rate);
-            $("#info-total").html(ticket.total);
-            $("#info-pickup").html(ticket.pickup);
-            $("#info-deliver").html(ticket.deliver);
+            $("#info-date").html(ticket.date_gen).data('rowinfobase', ticket.date_gen );
+            $("#info-number").html(ticket.number).data('rowinfobase', ticket.number );
+            $("#info-unit").html(ticket.vehicle.unit_number).data('rowinfobase', ticket.vehicle.unit_number );
+            $("#info-material").html(ticket.material.name).data('rowinfobase', ticket.material.name );
+            $("#info-tonage").html(ticket.tonage).data('rowinfobase', ticket.tonage );
+            $("#info-rate").html(ticket.rate).data('rowinfobase', ticket.rate );
+            $("#info-total").html(ticket.total).data('rowinfobase', ticket.total );
+            $("#info-pickup").html(ticket.pickup).data('rowinfobase', ticket.pickup );
+            $("#info-deliver").html(ticket.deliver).data('rowinfobase', ticket.deliver );
 
             $(".recheck-link").prop("href",ticket.recheck_link);
             $("#id-approve").val(ticket.id);
@@ -54,8 +53,28 @@ jQuery(function() {
             }
             
             
-            
-            
+            /* PERMISOS UPDATE */
+            const changeField = async (url,field) => {
+                const config = (method,obj) => {
+                    headers = new Headers();
+                    headers.append('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content') );
+                    let conf = {
+                        method: method,
+                        headers: headers,
+                        body: JSON.stringify(obj),
+                        withCredentials: true,  
+                        crossorigin: true,  
+                    };
+                    console.log(conf)
+                    return conf
+                };
+                const response = await fetch(url, config('POST',field));
+                return response.json();
+            }
+            if( $(`[data-update="true"]`).length > 0 ){
+                const route = $(`#btnUpdateTicket`).attr('href').split("/update/");
+                $(`#btnUpdateTicket`).attr('href', `${route[0]}/update/${ticket.id}` );
+            }
 
         });
     });
@@ -117,7 +136,9 @@ jQuery(function() {
         ev.preventDefault();       
     });
 
-    document.getElementsByClassName('upload-box')[0].addEventListener('drop', handleDrop, false);
+    if(document.getElementsByClassName('upload-box').length > 0){
+        document.getElementsByClassName('upload-box')[0].addEventListener('drop', handleDrop, false);
+    }
 
     function handleDrop(ev) {
         ev.preventDefault();

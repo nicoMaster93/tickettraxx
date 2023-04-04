@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class ContractorsController extends Controller
 {
@@ -101,11 +102,19 @@ class ContractorsController extends Controller
         return redirect()->route('contractors.index')->with('message', 'Contractor created successfully!');
     }
 
-    public function delete($id){
-        $contractor = ContractorsModel::findOrFail($id);
-        $contractor->fk_contractor_state = 2;
-        $contractor->save();
-        return redirect()->route('contractors.index')->with('message', 'Contractor disabled successfully!');
+    public function delete($id,$permanent=false){
+        if($permanent){
+            $contractor = ContractorsModel::find($id);
+            $del = $contractor->delete();
+            Log::info(['delete', $del]);
+            
+            return redirect()->route('contractors.index')->with('message', 'Contractor deleted successfully!');
+        }else{
+            $contractor = ContractorsModel::findOrFail($id);
+            $contractor->fk_contractor_state = 2;
+            $contractor->save();
+            return redirect()->route('contractors.index')->with('message', 'Contractor disabled successfully!');
+        }
     }
 
     public function activate($id){

@@ -3,11 +3,17 @@
 @section('content')
 <div class="container-fluid">    
     <div class="row align-items-center">
-        <div class="col-6">
+        <div class="col-4">
             <h1>Deductions</h1>
         </div>
-        <div class="col-2"></div>
-        <div class="col-2 text-right">
+        <div class="col-3 text-right">
+            @if(in_array(29, $menu_user))
+            <a class="btn"  href="{{ route('deductions.download_template') }}">
+                <img src="{{ asset('imgs/download.png')}}" /> Deduction Template download
+            </a>
+            @endif
+        </div>
+        <div class="col-3 text-right">
             @if(in_array(29, $menu_user))
             <button type="button" class="btn btn-excel"  data-toggle="modal" data-target="#modal-upload">
                 <img src="{{ asset('imgs/excel.png')}}" /> Deduction bulk upload

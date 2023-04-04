@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use PhpParser\Node\Expr\Empty_;
+use Illuminate\Support\Facades\Log;
+use ZipArchive;
 
 class DeductionsController extends Controller
 {
@@ -397,10 +399,12 @@ class DeductionsController extends Controller
         $reader = Reader::createFromString($contents);
         $reader->setDelimiter(';');
         $arrData = array();
-        
         foreach ($reader as $index => $row) {            
             try{
-                
+                if($index == 0 && strtolower($row[0]) === 'date loan'){
+                    /* Es el encabezado  */
+                    continue;
+                }
                 foreach($row as $key =>$valor){
                     if($valor==""){
                         $row[$key]=null;
@@ -432,9 +436,10 @@ class DeductionsController extends Controller
                 }
 
                 
+                $datePrev = explode("/",$row[0]);
 
-                $datePrev = explode("-",$row[0]);
-                $date_gen = $datePrev[2]."-".$datePrev[0]."-".$datePrev[1];
+                /* año - mes - dia */
+                $date_gen = $datePrev[2]."-".$datePrev[1]."-".$datePrev[0];
                 
                 $date_pay = new DateTime($date_gen);
                 $date_pay->add(new DateInterval("P14D"));
@@ -451,8 +456,8 @@ class DeductionsController extends Controller
                 $arrInt["state"] = $row[3];
                 $arrInt["gallons"] = $row[4];
                 $arrInt["total"] = $row[5];
-
-
+                /* Agrego el type  */
+                $arrInt["type"] = $row[6];
 
                 $arrData[$inicio->format("Y-m-d")][$arrInt["contractor"]] = $arrData[$inicio->format("Y-m-d")][$arrInt["contractor"]] ?? array();
                 array_push($arrData[$inicio->format("Y-m-d")][$arrInt["contractor"]],$arrInt);
@@ -460,16 +465,18 @@ class DeductionsController extends Controller
                 array_push($errors, "Error ".$e->getMessage()." on row ".($index+1));
             }          
         }
+        
         foreach($arrData as $date_pay => $data1){
             foreach($data1 as $contractor => $data){
-                
                 $deduccion = new DeductionsModel;
-                $deduccion->fk_deduction_type = "2";          
+                // $deduccion->fk_deduction_type = "2"; 
+                /* Se adiciona el type desde el cargue JN */         
                 $config = ConfigModel::findOrFail(1);
-            
+                
                 $total = $config->fee * sizeof($data);
                 foreach($data as $veh){
                     $total += $veh["total"];
+                    $deduccion->fk_deduction_type = $veh['type']; 
                 }
                 $deduccion->total_value = $total;
                 $deduccion->balance_due = $total;
@@ -545,5 +552,30 @@ class DeductionsController extends Controller
             $string = trim(str_replace($cambio, $valor, $string));
         }
         return $string;
+    }
+    
+    public function download_template(){
+        /* Elimino la existencia del zip anterior */
+        if(file_exists(public_path('app/public/plantillas/deduction_template.zip'))){
+            unlink( public_path('app/public/plantillas/deduction_template.zip') );
+        }
+        // Crea un nuevo archivo ZIP
+        $zip = new ZipArchive;
+        $base = public_path('storage/plantillas/');
+        $filename = $base . 'deduction_template.zip';
+        if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
+            exit('No se pudo crear el archivo ZIP');
+        }
+
+        // Agrega los archivos al archivo ZIP
+        $archivos = ['deduction_Base.csv','deduction_types.csv'];
+        foreach ($archivos as $archivo) {
+            $ruta_archivo = $base . $archivo;
+            $zip->addFile($ruta_archivo, $archivo);
+        }
+        // Cierra el archivo ZIP
+        $zip->close();
+        return response()->download($filename, 'deduction_template.zip');
+
     }
 }

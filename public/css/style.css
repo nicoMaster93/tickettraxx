@@ -383,6 +383,9 @@ td.cont-icons a {
 td.cont-icons a {
     margin: 0 2px;
 }
+td.cont-icons a img.delete{
+    max-height: 18px;
+}
 
 table.dataTable tbody tr.gray-row {
     background: #f5f5f5;
