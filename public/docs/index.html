@@ -1,0 +1,667 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>API Reference</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/all.js"></script>
+
+
+          <script>
+        $(function() {
+            setupLanguages(["bash","javascript"]);
+        });
+      </script>
+      </head>
+
+  <body class="">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+        <img src="images/logo.png" />
+                    <div class="lang-selector">
+                                  <a href="#" data-language-name="bash">bash</a>
+                                  <a href="#" data-language-name="javascript">javascript</a>
+                            </div>
+                            <div class="search">
+              <input type="text" class="search" id="input-search" placeholder="Search">
+            </div>
+            <ul class="search-results"></ul>
+              <div id="toc">
+      </div>
+                    <ul class="toc-footer">
+                                  <li><a href='http://github.com/mpociot/documentarian'>Documentation Powered by Documentarian</a></li>
+                            </ul>
+            </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+          <!-- START_INFO -->
+<h1>Info</h1>
+<p>Welcome to the generated API reference.
+<a href="http://concrete.test/docs/collection.json">Get Postman Collection</a></p>
+<!-- END_INFO -->
+<h1>v 1.0.0</h1>
+<!-- START_4ff52ac647ee8805b2ed545f24ee1926 -->
+<h2>Login contractor</h2>
+<p>Generate an access token to use in the rest of the app</p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST \
+    "http://concrete.test/api/contractor/login" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"user":"nihil","pass":"esse"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/contractor/login"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "user": "nihil",
+    "pass": "esse"
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/contractor/login</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>String</td>
+<td>required</td>
+<td>Contractor Email.</td>
+</tr>
+<tr>
+<td><code>pass</code></td>
+<td>String</td>
+<td>required</td>
+<td>Contractor password.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_4ff52ac647ee8805b2ed545f24ee1926 -->
+<!-- START_19102cf11852351972166f484c88a45c -->
+<h2>Edit contractor</h2>
+<p>Update basic fields of contractor</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT \
+    "http://concrete.test/api/contractor/update" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"name":"molestiae","email":"ea","password":"aut","repeat_password":"numquam"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/contractor/update"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "name": "molestiae",
+    "email": "ea",
+    "password": "aut",
+    "repeat_password": "numquam"
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/contractor/update</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>String</td>
+<td>required</td>
+<td>Contractor Name.</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>String</td>
+<td>required</td>
+<td>Contractor Email.</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>String</td>
+<td>optional</td>
+<td>User password.</td>
+</tr>
+<tr>
+<td><code>repeat_password</code></td>
+<td>String</td>
+<td>optional</td>
+<td>User password again.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_19102cf11852351972166f484c88a45c -->
+<!-- START_bde14a442e2b858d84bb71da86fcc102 -->
+<h2>Logout contractor</h2>
+<p>Logout contractor</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST \
+    "http://concrete.test/api/contractor/logout" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json"</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/contractor/logout"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/contractor/logout</code></p>
+<!-- END_bde14a442e2b858d84bb71da86fcc102 -->
+<!-- START_b5da8b29b47755a2eb3691637cc99826 -->
+<h2>Collection of tickets</h2>
+<p>Shows all tickets by contractor</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET \
+    -G "http://concrete.test/api/tickets_contractor" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"start_date":"non","end_date":"officiis","ticket_number":"voluptas"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/tickets_contractor"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "start_date": "non",
+    "end_date": "officiis",
+    "ticket_number": "voluptas"
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "success": false,
+    "error": "Authentication Error"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/tickets_contractor</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_date</code></td>
+<td>String</td>
+<td>optional</td>
+<td>optional Start date for ticket filter.</td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td>String</td>
+<td>optional</td>
+<td>optional End date for ticket filter.</td>
+</tr>
+<tr>
+<td><code>ticket_number</code></td>
+<td>String</td>
+<td>optional</td>
+<td>optional Ticket number to find.</td>
+</tr>
+</tbody>
+</table>
+<!-- END_b5da8b29b47755a2eb3691637cc99826 -->
+<!-- START_a15e713e88d9ca29c96f861e9612a3ac -->
+<h2>Create ticket</h2>
+<p>Create a ticket to verify</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X POST \
+    "http://concrete.test/api/tickets_contractor/create" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"number":"quia","date_gen":"ut","vehicle":"dolorem","material":"eum","other_material":"vitae","pickup":"nulla","deliver":"aspernatur","tonage":"eius","rate":"assumenda","total":"eos","photo":"expedita","photo_box_data":"vitae","photo_box_name":"eius"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/tickets_contractor/create"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "number": "quia",
+    "date_gen": "ut",
+    "vehicle": "dolorem",
+    "material": "eum",
+    "other_material": "vitae",
+    "pickup": "nulla",
+    "deliver": "aspernatur",
+    "tonage": "eius",
+    "rate": "assumenda",
+    "total": "eos",
+    "photo": "expedita",
+    "photo_box_data": "vitae",
+    "photo_box_name": "eius"
+}
+
+fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>POST api/tickets_contractor/create</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>number</code></td>
+<td>String</td>
+<td>required</td>
+<td>Ticket Number</td>
+</tr>
+<tr>
+<td><code>date_gen</code></td>
+<td>Date</td>
+<td>required</td>
+<td>Ticket generation date format YYYY-MM-DD</td>
+</tr>
+<tr>
+<td><code>vehicle</code></td>
+<td>String</td>
+<td>required</td>
+<td>Unit number or Alias of vechile</td>
+</tr>
+<tr>
+<td><code>material</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Material id or with value &quot;other&quot;</td>
+</tr>
+<tr>
+<td><code>other_material</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Required if material is &quot;other&quot;</td>
+</tr>
+<tr>
+<td><code>pickup</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket Pickup</td>
+</tr>
+<tr>
+<td><code>deliver</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket Deliver</td>
+</tr>
+<tr>
+<td><code>tonage</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Tonage</td>
+</tr>
+<tr>
+<td><code>rate</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Rate</td>
+</tr>
+<tr>
+<td><code>total</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Total by default is rate multiplied by tonage</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td>File</td>
+<td>optional</td>
+<td>Ticket photo in file format</td>
+</tr>
+<tr>
+<td><code>photo_box_data</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket photo in base64</td>
+</tr>
+<tr>
+<td><code>photo_box_name</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket photo name, if it sended by base64</td>
+</tr>
+</tbody>
+</table>
+<!-- END_a15e713e88d9ca29c96f861e9612a3ac -->
+<!-- START_43a27bc8c19b7968555adb773887bbfd -->
+<h2>Update ticket</h2>
+<p>Update ticket if state is sended to recheck or to verify</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X PUT \
+    "http://concrete.test/api/tickets_contractor/update/reiciendis" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"number":"unde","date_gen":"quis","vehicle":"voluptas","material":"et","other_material":"quis","pickup":"neque","deliver":"molestiae","tonage":"ut","rate":"rerum","total":"officia","photo":"sit","photo_box_data":"et","photo_box_name":"occaecati"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/tickets_contractor/update/reiciendis"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "number": "unde",
+    "date_gen": "quis",
+    "vehicle": "voluptas",
+    "material": "et",
+    "other_material": "quis",
+    "pickup": "neque",
+    "deliver": "molestiae",
+    "tonage": "ut",
+    "rate": "rerum",
+    "total": "officia",
+    "photo": "sit",
+    "photo_box_data": "et",
+    "photo_box_name": "occaecati"
+}
+
+fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<h3>HTTP Request</h3>
+<p><code>PUT api/tickets_contractor/update/{id}</code></p>
+<h4>URL Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>optional</td>
+<td>Integer required ID of ticket to modify.</td>
+</tr>
+</tbody>
+</table>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>number</code></td>
+<td>String</td>
+<td>required</td>
+<td>Ticket Number</td>
+</tr>
+<tr>
+<td><code>date_gen</code></td>
+<td>Date</td>
+<td>required</td>
+<td>Ticket generation date format YYYY-MM-DD</td>
+</tr>
+<tr>
+<td><code>vehicle</code></td>
+<td>String</td>
+<td>required</td>
+<td>Unit number or Alias of vechile</td>
+</tr>
+<tr>
+<td><code>material</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Material id or with value &quot;other&quot;</td>
+</tr>
+<tr>
+<td><code>other_material</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Required if material is &quot;other&quot;</td>
+</tr>
+<tr>
+<td><code>pickup</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket Pickup</td>
+</tr>
+<tr>
+<td><code>deliver</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket Deliver</td>
+</tr>
+<tr>
+<td><code>tonage</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Tonage</td>
+</tr>
+<tr>
+<td><code>rate</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Rate</td>
+</tr>
+<tr>
+<td><code>total</code></td>
+<td>Decimal</td>
+<td>required</td>
+<td>Ticket Total by default is rate multiplied by tonage</td>
+</tr>
+<tr>
+<td><code>photo</code></td>
+<td>File</td>
+<td>optional</td>
+<td>Ticket photo in file format</td>
+</tr>
+<tr>
+<td><code>photo_box_data</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket photo in base64</td>
+</tr>
+<tr>
+<td><code>photo_box_name</code></td>
+<td>String</td>
+<td>optional</td>
+<td>Ticket photo name, if it sended by base64</td>
+</tr>
+</tbody>
+</table>
+<!-- END_43a27bc8c19b7968555adb773887bbfd -->
+<!-- START_d6c74f99b225e5f2201ef212b86d2214 -->
+<h2>Collection of payments</h2>
+<p>Shows all payments by contractor</p>
+<p><br><small style="padding: 1px 9px 2px;font-weight: bold;white-space: nowrap;color: #ffffff;-webkit-border-radius: 9px;-moz-border-radius: 9px;border-radius: 9px;background-color: #3a87ad;">Requires authentication</small></p>
+<blockquote>
+<p>Example request:</p>
+</blockquote>
+<pre><code class="language-bash">curl -X GET \
+    -G "http://concrete.test/api/payments" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -d '{"start_date":"nihil","end_date":"incidunt"}'
+</code></pre>
+<pre><code class="language-javascript">const url = new URL(
+    "http://concrete.test/api/payments"
+);
+
+let headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "start_date": "nihil",
+    "end_date": "incidunt"
+}
+
+fetch(url, {
+    method: "GET",
+    headers: headers,
+    body: body
+})
+    .then(response =&gt; response.json())
+    .then(json =&gt; console.log(json));</code></pre>
+<blockquote>
+<p>Example response (401):</p>
+</blockquote>
+<pre><code class="language-json">{
+    "success": false,
+    "error": "Authentication Error"
+}</code></pre>
+<h3>HTTP Request</h3>
+<p><code>GET api/payments</code></p>
+<h4>Body Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>start_date</code></td>
+<td>String</td>
+<td>optional</td>
+<td>optional Start date for payments filter (Format: YYYY-MM-DD).</td>
+</tr>
+<tr>
+<td><code>end_date</code></td>
+<td>String</td>
+<td>optional</td>
+<td>optional End date for payments filter (Format: YYYY-MM-DD).</td>
+</tr>
+</tbody>
+</table>
+<!-- END_d6c74f99b225e5f2201ef212b86d2214 -->
+      </div>
+      <div class="dark-box">
+                        <div class="lang-selector">
+                                    <a href="#" data-language-name="bash">bash</a>
+                                    <a href="#" data-language-name="javascript">javascript</a>
+                              </div>
+                </div>
+    </div>
+  </body>
+</html>
